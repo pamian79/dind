@@ -90,13 +90,17 @@ if [[ -n "${USE_DIND_IMAGES_LIB}" && "${USE_DIND_IMAGES_LIB}" != "false" ]]; the
      echo "Trying to use image-lib-dir $ii ... "
      [[ -d "${DOCKERD_DATA_ROOT}" ]] && rm -rf "${DOCKERD_DATA_ROOT}"
      mv $ii "${DOCKERD_DATA_ROOT}" && \
-     DOCKERD_PARAMS="${DOCKERD_PARAMS} --data-root ${DOCKERD_DATA_ROOT}" && \
+     DOCKERD_PARAMS="${DOCKERD_PARAMS} --data-root ${DOCKERD_DATA_ROOT} --authorization-plugin=cf-authz-plugin" && \
      export DOCKERD_DATA_ROOT && \
      echo "Successfully moved ${ii} to ${DOCKERD_DATA_ROOT} " && \
      break
    done
 fi
 echo "DOCKERD_PARAMS = ${DOCKERD_PARAMS}"
+
+# Starting authorization plugin
+
+cf-authz-plugin &
 
 # Starting monitor
 ${DIR}/monitor/start.sh  <&- &
