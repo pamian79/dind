@@ -99,8 +99,8 @@ fi
 echo "DOCKERD_PARAMS = ${DOCKERD_PARAMS}"
 
 # Starting authorization plugin
-
-cf-authz-plugin &
+echo "Starting authz-plugin in background..."
+authz-plugin &
 
 # Starting monitor
 ${DIR}/monitor/start.sh  <&- &
