@@ -110,6 +110,7 @@ MONITOR_PID=$!
 dockerd ${DOCKERD_PARAMS} <&- &
 
 ### Starting the second daemon for users' sandbox
+echo {} > /etc/docker/daemon-sandbox.json
 dockerd \
         -H unix:///var/run/docker-sandbox.sock \
         -p /var/run/docker-sandbox.pid \
@@ -118,6 +119,7 @@ dockerd \
         --bridge=none \
         --data-root=/var/lib/docker-sandbox \
         --exec-root=/var/run/docker-sandbox \
+        --config-file=/etc/docker/daemon-sandbox.json \
         --authorization-plugin=cf-authz-plugin <&- &
 
 CNT=0
