@@ -90,7 +90,7 @@ if [[ -n "${USE_DIND_IMAGES_LIB}" && "${USE_DIND_IMAGES_LIB}" != "false" ]]; the
      echo "Trying to use image-lib-dir $ii ... "
      [[ -d "${DOCKERD_DATA_ROOT}" ]] && rm -rf "${DOCKERD_DATA_ROOT}"
      mv $ii "${DOCKERD_DATA_ROOT}" && \
-     DOCKERD_PARAMS="${DOCKERD_PARAMS} --data-root ${DOCKERD_DATA_ROOT} --authorization-plugin=cf-authz-plugin" && \
+     DOCKERD_PARAMS="${DOCKERD_PARAMS} --data-root ${DOCKERD_DATA_ROOT}" && \
      export DOCKERD_DATA_ROOT && \
      echo "Successfully moved ${ii} to ${DOCKERD_DATA_ROOT} " && \
      break
@@ -107,7 +107,7 @@ ${DIR}/monitor/start.sh  <&- &
 MONITOR_PID=$!
 
 ### Trying to start docker
-dockerd ${DOCKERD_PARAMS} <&- &
+dockerd --authorization-plugin=cf-authz-plugin ${DOCKERD_PARAMS} <&- &
 CNT=0
 while ! test -f /var/run/docker.pid || test -z "$(cat /var/run/docker.pid)" || ! docker ps
 do
