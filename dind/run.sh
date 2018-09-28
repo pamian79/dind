@@ -107,7 +107,19 @@ ${DIR}/monitor/start.sh  <&- &
 MONITOR_PID=$!
 
 ### Trying to start docker
-dockerd --authorization-plugin=cf-authz-plugin ${DOCKERD_PARAMS} <&- &
+dockerd ${DOCKERD_PARAMS} <&- &
+
+### Starting the second daemon for users' sandbox
+dockerd \
+        -H unix:///var/run/docker-sandbox.sock \
+        -p /var/run/docker-sandbox.pid \
+        --iptables=false \
+        --ip-masq=false \
+        --bridge=none \
+        --data-root=/var/lib/docker-sandbox \
+        --exec-root=/var/run/docker-sandbox \
+        --authorization-plugin=cf-authz-plugin <&- &
+
 CNT=0
 while ! test -f /var/run/docker.pid || test -z "$(cat /var/run/docker.pid)" || ! docker ps
 do
