@@ -107,16 +107,14 @@ ${DIR}/monitor/start.sh  <&- &
 MONITOR_PID=$!
 
 ### Trying to start docker
-dockerd ${DOCKERD_PARAMS} <&- &
+dockerd ${DOCKERD_PARAMS} --fixed-cidr=172.17.0.0/24 <&- &
 
 ### Starting the second daemon for users' sandbox
 echo {} > /etc/docker/daemon-sandbox.json
 dockerd \
         -H unix:///var/run/docker-sandbox.sock \
         -p /var/run/docker-sandbox.pid \
-        --iptables=false \
-        --ip-masq=false \
-        --bridge=none \
+        --fixed-cidr=172.17.1.0/24 \
         --data-root=/var/lib/docker-sandbox \
         --exec-root=/var/run/docker-sandbox \
         --config-file=/etc/docker/daemon-sandbox.json \
