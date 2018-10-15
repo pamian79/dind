@@ -14,6 +14,7 @@ RUN apk add bash jq --no-cache
 COPY --from=node-exporter /bin/node_exporter /bin/
 COPY --from=dind-cleaner /usr/local/bin/dind-cleaner /bin/
 COPY --from=build-plugin /go/src/github.com/authz-plugin/authz-plugin /bin/
+COPY --from=build-plugin /go/src/github.com/authz-plugin/pluginConfig.json /dind/
 
 WORKDIR /dind
 ADD /dind /dind

@@ -100,7 +100,7 @@ echo "DOCKERD_PARAMS = ${DOCKERD_PARAMS}"
 
 # Starting authorization plugin
 echo "Starting authz-plugin in background..."
-authz-plugin &
+authz-plugin --config ./pluginConfig.json &
 
 # Starting monitor
 ${DIR}/monitor/start.sh  <&- &
