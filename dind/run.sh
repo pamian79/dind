@@ -48,6 +48,9 @@ sigterm_trap(){
    kill $DOCKER_PID
    sleep 2
 
+   echo "killing AUTHZ_PLUGIN_PID ${AUTHZ_PLUGIN_PID}"
+   kill $AUTHZ_PLUGIN_PID
+
    if [[ -n "${USE_DIND_IMAGES_LIB}" && "${USE_DIND_IMAGES_LIB}" != "false" && -n "${DOCKERD_DATA_ROOT}" ]]; then
      echo "We used DIND_IMAGES_LIB directory, removing DOCKERD_DATA_ROOT = ${DOCKERD_DATA_ROOT}"
      time rm -rf ${DOCKERD_DATA_ROOT}
@@ -100,7 +103,8 @@ echo "DOCKERD_PARAMS = ${DOCKERD_PARAMS}"
 
 # Starting authorization plugin
 echo "Starting authz-plugin in background..."
-authz-plugin --config ./pluginConfig.json &
+authz-plugin --config ./pluginConfig.json <&- &
+AUTHZ_PLUGIN_PID=$!
 
 # Starting monitor
 ${DIR}/monitor/start.sh  <&- &
