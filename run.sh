@@ -96,6 +96,13 @@ if [[ -n "${USE_DIND_IMAGES_LIB}" && "${USE_DIND_IMAGES_LIB}" != "false" ]]; the
      break
    done
 fi
+if [[ -n "${DOCKERD_PARAMS_B64}" ]]; then
+   DOCKERD_PARAMS_ADD=$(echo "${DOCKERD_PARAMS_B64}" | base64 -d )
+   if [[ $? == 0 && -n "${DOCKERD_PARAMS_ADD}" ]]; then
+      DOCKERD_PARAMS="${DOCKERD_PARAMS} ${DOCKERD_PARAMS_ADD}"
+   fi
+fi
+
 echo "DOCKERD_PARAMS = ${DOCKERD_PARAMS}"
 
 # Starting monitor
