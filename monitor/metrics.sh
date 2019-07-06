@@ -35,8 +35,26 @@ if [[ $(uname) == "Linux" ]]; then
    DF_OPTS="-B 1024"
 fi
 
+DOCKER_INIT_BEGIN=$(date +%s)
+
+DOCKER_UP=0
+cat <<EOF >> $METRIC_FILE_TMP
+# TYPE docker_up gauge
+# HELP docker_up - docker daemon is running
+docker_up{$LABELS} ${DOCKER_UP}
+EOF
+
 while true; do
-    # Checking if docker is up
+  # Checking if docker is up
+  docker info
+  if [[ $? == 0 ]]; then
+    DOCKER_INIT_END=$(date +%s)
+  break
+  fi
+sleep 0.5
+done
+
+while true; do
     docker ps -q > ${DOCKER_PS_OUT_FILE}
     if [[ $? == 0 ]]; then
       DOCKER_UP=1
@@ -58,6 +76,14 @@ while true; do
     DOCKER_VOLUME_INODES_USAGE=$(cat ${DF_INODES_OUT_FILE} | awk 'NR==2 {print $3 / $2}')
 
     cat <<EOF > $METRIC_FILE_TMP
+# TYPE docker_init_begin gauge
+# HELP docker_init_begin - timestamp of docker initialization start
+docker_init_begin{$LABELS} ${DOCKER_INIT_BEGIN}
+
+# TYPE docker_init_end gauge
+# HELP docker_init_end - timestamp of docker initialization end
+docker_init_end{$LABELS} ${DOCKER_INIT_END}
+
 # TYPE docker_up gauge
 # HELP docker_up - docker daemon is running
 docker_up{$LABELS} ${DOCKER_UP}
