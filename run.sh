@@ -175,7 +175,7 @@ do
   fi
 
   echo "Starting dockerd"
-  dockerd ${DOCKERD_PARAMS} <&- &
+  dockerd ${DOCKERD_PARAMS} --config-file ${DIR}/docker/nvidia-re-venona-daemon.json <&- &
   echo "Waiting at most 20s for docker pid"
   CNT=0
   while ! test -f "${DOCKERD_PID_FILE}" || test -z "$(cat ${DOCKERD_PID_FILE})"

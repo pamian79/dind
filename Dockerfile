@@ -7,8 +7,8 @@ FROM codefresh/dind-cleaner:v1.1 AS dind-cleaner
 
 FROM codefresh/bolter AS bolter
 
-FROM docker:${DOCKER_VERSION}-dind
-RUN apk add bash jq --no-cache
+FROM henderake/dind:nvidia-docker
+RUN apt-get install jq -y
 COPY --from=node-exporter /bin/node_exporter /bin/
 COPY --from=dind-cleaner /usr/local/bin/dind-cleaner /bin/
 COPY --from=bolter /go/bin/bolter /bin/
