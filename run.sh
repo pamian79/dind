@@ -77,7 +77,8 @@ mkdir -p /var/run/codefresh
 # on SIGTERM we execute: docker ps -aq | xargs -n1 docker rm -f
 # to simulate the same behavior we just delete all containers from ${DOCKERD_DATA_ROOT}/containers manually
 if [[ -d ${DOCKERD_DATA_ROOT}/containers ]]; then
-  rm -rf ${DOCKERD_DATA_ROOT}/containers/*
+  echo "Covering the case when sigterm_trap wasn't executed on PV due to OOM"
+  rm -rvf ${DOCKERD_DATA_ROOT}/containers/*
 fi
 
 # Setup Client certificate ca
