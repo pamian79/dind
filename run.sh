@@ -78,7 +78,7 @@ mkdir -p /var/run/codefresh
 # to simulate the same behavior we just delete all containers from ${DOCKERD_DATA_ROOT}/containers manually
 if [[ -d ${DOCKERD_DATA_ROOT}/containers ]]; then
   echo "Covering the case when sigterm_trap wasn't executed on PV due to OOM"
-  rm -rvf ${DOCKERD_DATA_ROOT}/containers/*
+  rm -rf ${DOCKERD_DATA_ROOT}/containers/*
 fi
 
 # Setup Client certificate ca
