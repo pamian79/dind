@@ -72,9 +72,11 @@ trap sigterm_trap SIGTERM SIGINT
 rm -fv /var/run/docker.pid
 mkdir -p /var/run/codefresh
 
-# Covering the case when sigterm_trap wasn't executed on PV due to OOM 
-# on SIGTERM we execute: docker ps -aq | xargs -n1 docker rm -f
-# to simulate the same behavior we just delete all containers from ${DOCKERD_DATA_ROOT}/containers manually
+# covering the case when sigterm_trap wasn't executed on PV due to OOM 
+# to make sure that containers won't start during the dockerd boot 
+# we reset their `RestartPolicy.Name` to `null` and they will be deleted
+# during the next SIGTERM.
+echo "$(date) - Covering the case with OOM on dind SIGTERM"
 for file in ${DOCKERD_DATA_ROOT}/containers/*/hostconfig.json
 do 
   TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file
