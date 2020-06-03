@@ -77,8 +77,11 @@ mkdir -p /var/run/codefresh
 # we reset their `RestartPolicy.Name` to `null` and they will be deleted
 # during the next SIGTERM.
 echo "$(date) - Covering the case with OOM on dind SIGTERM"
+TEMP_DIR_HEHE="/tmp/containers_orig"
+mkdir -p $TEMP_DIR_HEHE
 for file in ${DOCKERD_DATA_ROOT}/containers/*/hostconfig.json
-do 
+do
+  cp -rp $file ${TEMP_DIR_HEHE}/$(echo ${file} |awk -F'/' '{print $6}')_hostconfig.json
   TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file
   [[ $? == 0 ]] && echo "${TJQ}" >| $file)
 done
