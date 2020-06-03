@@ -76,6 +76,7 @@ mkdir -p /var/run/codefresh
 # to make sure that containers won't start during the dockerd boot 
 # we reset their `RestartPolicy.Name` to `null` and they will be deleted
 # during the next SIGTERM.
+set -x	
 echo "$(date) - Covering the case with OOM on dind SIGTERM"
 TEMP_DIR_HEHE="/tmp/containers_orig"
 mkdir -p $TEMP_DIR_HEHE
@@ -85,6 +86,7 @@ do
   TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file
   [[ $? == 0 ]] && echo "${TJQ}" >| $file)
 done
+set +x	
 
 # Setup Client certificate ca
 if [[ -n "${CODEFRESH_CLIENT_CA_DATA}" ]]; then
