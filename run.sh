@@ -72,6 +72,15 @@ trap sigterm_trap SIGTERM SIGINT
 rm -fv /var/run/docker.pid
 mkdir -p /var/run/codefresh
 
+# Covering the case when sigterm_trap wasn't executed on PV due to OOM 
+# on SIGTERM we execute: docker ps -aq | xargs -n1 docker rm -f
+# to simulate the same behavior we just delete all containers from ${DOCKERD_DATA_ROOT}/containers manually
+for file in ${DOCKERD_DATA_ROOT}/containers/*/hostconfig.json
+do 
+  TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file
+  [[ $? == 0 ]] && echo "${TJQ}" >| $file)
+done
+
 # Setup Client certificate ca
 if [[ -n "${CODEFRESH_CLIENT_CA_DATA}" ]]; then
   CODEFRESH_CLIENT_CA_FILE=${CODEFRESH_CLIENT_CA_FILE:-/etc/ssl/cf-client/ca.pem}
