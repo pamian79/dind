@@ -83,8 +83,8 @@ mkdir -p $TEMP_DIR_HEHE
 for file in ${DOCKERD_DATA_ROOT}/containers/*/hostconfig.json
 do
   cp -rp $file ${TEMP_DIR_HEHE}/$(echo ${file} |awk -F'/' '{print $6}')_hostconfig.json
-  TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file
-  [[ $? == 0 ]] && echo "${TJQ}" >| $file)
+  TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file)
+  [[ $? == 0 ]] && echo "${TJQ}" >| $file
 done
 set +x	
 
