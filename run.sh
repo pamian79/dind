@@ -11,8 +11,10 @@ DIND_VOLUME_USED_BY_PODS_FILE=${DIND_VOLUME_STAT_DIR}/pods
 
 DIND_IMAGES_LIB_DIR=${DIND_IMAGES_LIB_DIR:-"/opt/codefresh/dind/images-libs"}
 
+FIRST_TIME_VOL_USAGE=""
 mkdir -p ${DIND_VOLUME_STAT_DIR}
 if [ ! -f ${DIND_VOLUME_STAT_DIR}/created ]; then
+  FIRST_TIME_VOL_USAGE=1
   echo "This is first usage of the dind-volume"
   date +%s > ${DIND_VOLUME_CREATED_TS_FILE}
 fi
@@ -76,17 +78,14 @@ mkdir -p /var/run/codefresh
 # to make sure that containers won't start during the dockerd boot 
 # we reset their `RestartPolicy.Name` to `null` and they will be deleted
 # during the next SIGTERM.
-set -x	
-echo "$(date) - Covering the case with OOM on dind SIGTERM"
-TEMP_DIR_HEHE="/tmp/containers_orig"
-mkdir -p $TEMP_DIR_HEHE
-for file in ${DOCKERD_DATA_ROOT}/containers/*/hostconfig.json
-do
-  cp -rp $file ${TEMP_DIR_HEHE}/$(echo ${file} |awk -F'/' '{print $6}')_hostconfig.json
-  TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file)
-  [[ $? == 0 ]] && echo "${TJQ}" >| $file
-done
-set +x	
+if [[ -z "${FIRST_TIME_VOL_USAGE}" ]]; then
+  echo "$(date) - Covering the case with OOM on dind SIGTERM"
+  for file in ${DOCKERD_DATA_ROOT}/containers/*/hostconfig.json
+  do
+    TJQ=$(jq -c '.RestartPolicy.Name = ""' < $file)
+    [[ $? == 0 ]] && echo "${TJQ}" >| $file
+  done
+fi
 
 # Setup Client certificate ca
 if [[ -n "${CODEFRESH_CLIENT_CA_DATA}" ]]; then
