@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    forceRedeployUniqId: N/A
+    # prometheus_port: "9100"
+    # prometheus_scrape: "true"
+  labels:
+    app: dind
+  name: pvc-dind-1
+spec:
+  automountServiceAccountToken: false
+  securityContext:
+    fsGroup: 0
+    runAsUser: 1000
+    runAsGroup: 1000
+  tolerations:
+    - effect: NoSchedule
+      key: codefresh.io
+      operator: Equal
+      value: dinds
+  containers:
+  - env:
+    - name: XDG_RUNTIME_DIR
+      value: /run/user/1000
+    - name: DOCKER_HOST
+      value: unix:///run/user/1000/docker.sock
+    - name: DOCKERD_DATA_ROOT
+      value: "/home/rootless/var/lib/docker"
+    # - name: CODEFRESH_CLIENT_CA_DATA
+    #   value: LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVEekNDQXZlZ0F3SUJBZ0lKQUlsMVhLenpseDROTUEwR0NTcUdTSWIzRFFFQkN3VUFNSUdkTVFzd0NRWUQKVlFRR0V3SlZVekVUTUJFR0ExVUVDQXdLUTJGc2FXWnZjbTVwWVRFV01CUUdBMVVFQnd3TlRXOTFiblJoYVc0ZwpWbWxsZHpFWE1CVUdBMVVFQ2d3T1EyOWtaV1p5WlhOb0lFbHVZeTR4Q3pBSkJnTlZCQXNNQWtsVU1SZ3dGZ1lEClZRUUREQTlqWVM1amIyUmxabkpsYzJndWFXOHhJVEFmQmdrcWhraUc5dzBCQ1FFV0VtRmtiV2x1UUdOdlpHVm0KY21WemFDNXBiekFlRncweE5qQTFNREl4TURVeU16bGFGdzB4T1RBMU1ETXhNRFV5TXpsYU1JR2RNUXN3Q1FZRApWUVFHRXdKVlV6RVRNQkVHQTFVRUNBd0tRMkZzYVdadmNtNXBZVEVXTUJRR0ExVUVCd3dOVFc5MWJuUmhhVzRnClZtbGxkekVYTUJVR0ExVUVDZ3dPUTI5a1pXWnlaWE5vSUVsdVl5NHhDekFKQmdOVkJBc01Ba2xVTVJnd0ZnWUQKVlFRRERBOWpZUzVqYjJSbFpuSmxjMmd1YVc4eElUQWZCZ2txaGtpRzl3MEJDUUVXRW1Ga2JXbHVRR052WkdWbQpjbVZ6YUM1cGJ6Q0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQU1RbW45OW1LNzNWCk9ubUpTSGRFaFR2NGNPS3hLckRqNUVxV05oVG5mOFJBK0tQSHlUZlpHZ2tYRnBiSGtNK2g0dGxyeHRSbFU5WVYKc09IS28vRktUQVd2UFAvQUhhWnJzUUU4ME9WZHAxNDVIY2VVcnErRFBoR2UrTnd0WUdJV0pqUUFEQmRhSnQ2WApHODdGYXp4anI4VTdMNnJ2VnpwNGhxRHg5KzFNQnQzSmZGOHBwbm4rZDZkMytLa05HRjNTRXNGNDR6d0gxbExNCjFRdU10ZVRmdmZPQjFobUw4dzZ6V3dEUDJteHJ4QzY1b0lZU2NzTFdSUjh3NGIyUmszMDFJRW00d1M4UVIrMWgKNVBZMkJTbmJoYXpORWI4M25ZL2QzUE9yY0tSSDVIQng4Y09VdVhJMGIrUXAxREZpTm5SOU5Wdm5jSjJUKzhjUQptODBQVE16b3ZVMENBd0VBQWFOUU1FNHdIUVlEVlIwT0JCWUVGS2E5b0pYRjh5eHMzNEFqT2NFWkFlc091SVVNCk1COEdBMVVkSXdRWU1CYUFGS2E5b0pYRjh5eHMzNEFqT2NFWkFlc091SVVNTUF3R0ExVWRFd1FGTUFNQkFmOHcKRFFZSktvWklodmNOQVFFTEJRQURnZ0VCQUJpTTFBaHFtMDByMWNQVEZTNTZydy9WZlFNVk1CajdzMEh3aDBJMApUSHUwdDBiQ1J2bzZDRFhzR2xRRnpYcHZTN2N4dHRuRllRTEwvdUdUN3NDb1NRSXV0ZTlMOG5jUmVnZUVnVHoxCmVxeHJrbjlxQmlIZUpGb3BNZG5YV1BRazJYemF6aE50NXNZTzEvT0ttUHFTOW9FTlNBOXJ6SmRwTlphR0dURjAKMmJXU0E3OFVvaG1KdTV3NEZaK1ZkVHloSFgxejhsNWx1cDhFdWZvRy92VEowT3orR3RidHQ2VUhjZWY2L1ZKMwp0ZWpSdExjQStNQUNuTEVWSVFueURGYW80bjNhVGdrZjhqellOdkdETlZFNkdyK3VJa2ZYdVRzcGxBNkc0VXZ2CmtJTEphOGdtRmQ5YU5lbS8ydGxZNCt6cS8zaVJoQUVGS2cwMHNBOG9FNXYvTEdvPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==
+    #image: docker:19.03.11-dind-rootless
+    image: kosta709/dind-rootless:t1
+    imagePullPolicy: Always
+    name: dind
+    command: ["rootlesskit"]
+    args:
+      - --net=vpnkit
+      - --mtu=1500
+      - --disable-host-loopback
+      - --port-driver=builtin
+      - --copy-up=/etc
+      - --copy-up=/run
+      - -p
+      - 0.0.0.0:1300:1300/tcp
+      - dockerd
+      - --config-file
+      - /etc/docker/daemon.json
+      - --debug
+      # - sleep
+      # - 2h
+
+    ports:
+    - containerPort: 1300
+      protocol: TCP
+    resources:
+      limits:
+        cpu: 300m
+        memory: 1000Gi
+      requests:
+        cpu: 300m
+        memory: 1000Mi
+    securityContext:
+      privileged: true
+    volumeMounts:
+    - mountPath: /etc/ssl/cf
+      name: cf-certs-dind
+    - mountPath: /etc/docker/daemon.json
+      name: dind-config
+      readOnly: true
+      subPath: daemon.json
+    - mountPath: /home/rootless/var/lib
+      name: dind-lib
+  dnsPolicy: ClusterFirst
+  hostname: pvc-dind-1
+  nodeSelector:
+    cloud.google.com/gke-os-distribution: ubuntu
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  subdomain: dind
+  volumes:
+  - name: cf-certs-dind
+    secret:
+      defaultMode: 420
+      secretName: cf-certs-dind
+  - configMap:
+      defaultMode: 420
+      name: dind-config-rootless
+    name: dind-config
+  - name: dind-lib
+    persistentVolumeClaim:
+      claimName: pvc-dind-rl-1
+
+#      ,
+#      "runtimeArgs": ["--debug", "--log", "/home/rootless/runc.log"]

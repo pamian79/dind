@@ -1,0 +1,19 @@
+
+runtimeCluster:
+  name: rootless-t1
+  kubeconfig: 
+  context: gke_codefresh-load_us-central1-c_rootless-t1
+  namespace: default
+
+codefreshApiURL: http://anz-t1.cf-cd.com
+codefreshCliToken: 5ee6421aa00b3bfa373eb45a.6a113603e9efbe362c64d95fc78f3125
+
+appCluster:
+  context: gke_codefresh-load_us-central1-c_anz-test-1
+  namespace: codefresh
+
+runtimeEnv:
+  name: rootless-t1
+  description: rootless test
+  extendsEnv:
+    - system/default

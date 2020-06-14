@@ -1,0 +1,8 @@
+FROM docker:19.03.11-dind-rootless
+USER root
+RUN wget https://github.com/containers/crun/releases/download/0.13/crun-0.13-static-x86_64 -O /usr/local/bin/crun && \
+    chmod a+x /usr/local/bin/crun
+
+RUN chown 1000:1000 /run
+
+USER rootless

@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  annotations:
+    codefresh.io/reuseVolumeSelector: codefresh-app,io.codefresh.accountName
+  labels:
+    io.codefresh.accountName: kosta709_github
+    codefresh-app: dind-rl
+    pod_name: dind-rl-1
+    pod_namespace: workflow
+  name: pvc-dind-rl-1
+  namespace: default
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 15Gi
+  # storageClassName: dind-ebs-us-east-2a
