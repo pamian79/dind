@@ -1,8 +1,37 @@
-FROM docker:19.03.11-dind-rootless
-USER root
-RUN wget https://github.com/containers/crun/releases/download/0.13/crun-0.13-static-x86_64 -O /usr/local/bin/crun && \
-    chmod a+x /usr/local/bin/crun
+FROM quay.io/prometheus/node-exporter:v0.15.1 AS node-exporter
+# install node-exporter
 
-RUN chown 1000:1000 /run
+FROM codefresh/dind-cleaner:v1.1 AS dind-cleaner
+
+FROM codefresh/bolter AS bolter
+
+FROM docker:19.03.11-dind-rootless
+
+USER root
+COPY --from=node-exporter /bin/node_exporter /usr/local/bin/
+COPY --from=dind-cleaner /usr/local/bin/dind-cleaner /usr/local/bin/
+COPY --from=bolter /go/bin/bolter /usr/local/bin/
+
+RUN apk upgrade \
+  && apk add bash jq --no-cache \
+  && rm -rf /var/cache/apk/*
+
+RUN wget https://github.com/containers/crun/releases/download/0.13/crun-0.13-static-x86_64 -O /usr/local/bin/crun && \
+    chmod a+x /usr/local/bin/crun 
+
+RUN mkdir -p /etc/docker && \
+    mkdir -p /etc/ssl/cf-client && \
+    chown 1000:1000 /run /etc/docker /etc/ssl/cf-client 
+
+ENV XDG_RUNTIME_DIR /run/user/1000
+ENV DOCKERD_DATA_ROOT /home/rootless/var/lib/docker
+ENTRYPOINT [""]
+
+WORKDIR /dind
+ADD . /dind
+ 
+RUN chown -R 1000:1000 /dind 
+
+CMD ["./run-rootless.sh"]
 
 USER rootless
